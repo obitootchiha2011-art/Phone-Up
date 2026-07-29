@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PhoneUp — Everything About Smartphones in One Place</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0a0a0c;
+    --bg-elev: #131316;
+    --bg-card: #17171b;
+    --line: #232327;
+    --red: #e6332a;
+    --red-dim: #7a1a17;
+    --text: #f2f1ee;
+    --text-dim: #9a9a9f;
+    --text-faint: #5c5c62;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  h1,h2,h3, .brand-name{font-family:'Space Grotesk', sans-serif;}
+  a{color:inherit; text-decoration:none;}
+  ::selection{background:var(--red); color:#fff;}
+
+  /* ---------- Layout helpers ---------- */
+  .wrap{max-width:1240px; margin:0 auto; padding:0 32px;}
+  section{padding:64px 0;}
+  .section-head{
+    display:flex; align-items:baseline; justify-content:space-between;
+    margin-bottom:24px;
+  }
+  .section-head h2{font-size:22px; font-weight:600; letter-spacing:-0.01em;}
+  .see-all{font-size:13px; color:var(--text-dim); border-bottom:1px solid transparent; transition:.2s;}
+  .see-all:hover{color:var(--red); border-color:var(--red);}
+
+  /* ---------- Header ---------- */
+  header{
+    position:sticky; top:0; z-index:100;
+    background:rgba(10,10,12,0.85);
+    backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    max-width:1240px; margin:0 auto; padding:16px 32px;
+    display:flex; align-items:center; justify-content:space-between; gap:24px;
+  }
+  .logo{display:flex; align-items:center; gap:10px; flex-shrink:0;}
+  .logo svg{height:30px; width:auto; filter:drop-shadow(0 0 10px rgba(230,51,42,0.45));}
+  .logo-text{font-weight:700; font-size:18px; letter-spacing:-0.02em;}
+  .logo-text span{color:var(--red);}
+
+  nav.links{display:flex; align-items:center; gap:30px; font-size:14px; color:var(--text-dim);}
+  nav.links a{position:relative; padding:4px 0; transition:color .2s;}
+  nav.links a:hover{color:var(--text);}
+  nav.links a.active{color:var(--text);}
+  nav.links a.active::after{
+    content:''; position:absolute; left:0; right:0; bottom:-6px; height:2px; background:var(--red);
+    box-shadow:0 0 8px var(--red);
+  }
+
+  .searchbar{
+    display:flex; align-items:center; gap:8px;
+    background:var(--bg-elev); border:1px solid var(--line); border-radius:20px;
+    padding:8px 14px; min-width:190px; transition:border-color .2s;
+  }
+  .searchbar:focus-within{border-color:var(--red);}
+  .searchbar input{
+    background:none; border:none; outline:none; color:var(--text); font-size:13px; width:100%;
+    font-family:'Inter',sans-serif;
+  }
+  .searchbar input::placeholder{color:var(--text-faint);}
+  .searchbar svg{flex-shrink:0; opacity:.6;}
+
+  .burger{display:none; flex-direction:column; gap:5px; cursor:pointer; background:none; border:none;}
+  .burger span{width:22px; height:2px; background:var(--text);}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position:relative; text-align:center; padding:90px 32px 40px;
+    overflow:hidden;
+  }
+  .hero-glow{
+    position:absolute; top:-120px; left:50%; transform:translateX(-50%);
+    width:900px; height:900px;
+    background:radial-gradient(circle, rgba(230,51,42,0.18) 0%, rgba(230,51,42,0) 62%);
+    pointer-events:none;
+  }
+  .ring-stage{
+    position:relative; width:340px; height:340px; margin:0 auto 20px;
+  }
+  .ring{
+    position:absolute; inset:0; border-radius:50%;
+    border:1.5px solid rgba(230,51,42,0.35);
+  }
+  .ring.r1{inset:0; animation:spin 22s linear infinite;}
+  .ring.r2{inset:34px; border-color:rgba(230,51,42,0.55); animation:spin 16s linear infinite reverse;}
+  .ring.r3{inset:68px; border-color:rgba(230,51,42,0.2); animation:spin 30s linear infinite;}
+  .ring::before{
+    content:''; position:absolute; top:-2px; left:50%; width:8px; height:8px; margin-left:-4px;
+    background:var(--red); border-radius:50%; box-shadow:0 0 12px 3px var(--red);
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .hero-phone{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:112px; height:230px; border-radius:26px;
+    background:linear-gradient(155deg,#26262b,#0c0c0e 65%);
+    border:2px solid #333338;
+    box-shadow:0 30px 60px -20px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(255,255,255,0.03);
+  }
+  .hero-phone::before{
+    content:''; position:absolute; top:14px; left:10px; right:10px; bottom:14px;
+    border-radius:16px; background:linear-gradient(160deg,#151517,#050506);
+  }
+  .hero-phone::after{
+    content:''; position:absolute; top:32px; left:50%; transform:translateX(-50%);
+    width:36px; height:36px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #3a1414, #0a0a0a 70%);
+    border:1px solid #2a2a2e;
+  }
+  @media (prefers-reduced-motion: reduce){
+    .ring{animation:none !important;}
+  }
+
+  h1.headline{
+    font-size:44px; font-weight:700; line-height:1.15; letter-spacing:-0.02em;
+    max-width:640px; margin:0 auto 18px;
+  }
+  .headline .accent{color:var(--red);}
+  .hero p.sub{
+    color:var(--text-dim); font-size:15px; max-width:480px; margin:0 auto 30px; line-height:1.6;
+  }
+  .btn-primary{
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--red); color:#fff; font-weight:600; font-size:14px;
+    padding:13px 30px; border-radius:24px; border:none; cursor:pointer;
+    box-shadow:0 8px 24px -8px rgba(230,51,42,0.6);
+    transition:transform .18s ease, box-shadow .18s ease, background .18s;
+  }
+  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 12px 28px -8px rgba(230,51,42,0.75); background:#f13d33;}
+  .btn-primary:active{transform:translateY(0);}
+
+  /* ---------- Phone cards ---------- */
+  .rail{
+    display:flex; gap:16px; overflow-x:auto; padding-bottom:8px; scroll-snap-type:x proximity;
+    scrollbar-width:none;
+  }
+  .rail::-webkit-scrollbar{display:none;}
+  .phone-card{
+    flex:0 0 210px; scroll-snap-align:start;
+    background:var(--bg-card); border:1px solid var(--line); border-radius:16px;
+    padding:16px; cursor:pointer;
+    transition:transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+  }
+  .phone-card:hover{
+    transform:translateY(-4px); border-color:rgba(230,51,42,0.4);
+    box-shadow:0 14px 30px -14px rgba(0,0,0,0.7);
+  }
+  .thumb{
+    height:150px; border-radius:12px; margin-bottom:14px;
+    display:flex; align-items:center; justify-content:center;
+    position:relative; overflow:hidden;
+  }
+  .thumb .mini-phone{
+    width:56px; height:112px; border-radius:12px; border:2px solid rgba(255,255,255,0.35);
+    background:rgba(255,255,255,0.08); backdrop-filter:blur(2px);
+  }
+  .card-meta{font-size:11px; color:var(--text-faint); margin-bottom:4px;}
+  .card-name{font-size:15px; font-weight:600; margin-bottom:2px;}
+  .card-price{font-size:13px; color:var(--text-dim); margin-bottom:8px;}
+  .stars{color:var(--red); font-size:12px; letter-spacing:1px; margin-bottom:12px;}
+  .card-views{font-size:11px; color:var(--text-faint); margin-bottom:12px; display:flex; align-items:center; gap:5px;}
+  .btn-ghost{
+    display:block; width:100%; text-align:center;
+    background:var(--bg-elev); border:1px solid var(--line); color:var(--text);
+    font-size:12px; font-weight:500; padding:9px; border-radius:10px;
+    transition:background .18s, border-color .18s;
+  }
+  .phone-card:hover .btn-ghost{border-color:var(--red); background:rgba(230,51,42,0.08);}
+
+  /* gradient thumbnails, matching mockup's colorful phone screens */
+  .g1{background:linear-gradient(135deg,#6a3ad1,#e6332a);}
+  .g2{background:linear-gradient(135deg,#1fb6a6,#e8e35e);}
+  .g3{background:linear-gradient(135deg,#3a63e6,#c23ad6);}
+  .g4{background:linear-gradient(135deg,#2f2f34,#8a8a92);}
+  .g5{background:linear-gradient(135deg,#e6332a,#ff9d6c);}
+  .g6{background:linear-gradient(135deg,#20202a,#4a4a58);}
+  .g7{background:linear-gradient(135deg,#d6336c,#e6332a);}
+  .g8{background:linear-gradient(135deg,#3a3a40,#6a6a72);}
+
+  /* ---------- Brands ---------- */
+  .brand-grid{
+    display:grid; grid-template-columns:repeat(6,1fr); gap:12px;
+  }
+  .brand-chip{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    background:var(--bg-card); border:1px solid var(--line); border-radius:12px;
+    padding:16px 10px; font-size:13px; font-weight:600; color:var(--text-dim);
+    cursor:pointer; transition:.2s; letter-spacing:.02em;
+  }
+  .brand-chip:hover, .brand-chip.active{
+    border-color:var(--red); color:var(--text); background:rgba(230,51,42,0.08);
+  }
+
+  /* ---------- Category icons (Best Phones) ---------- */
+  .cat-grid{
+    display:grid; grid-template-columns:repeat(6,1fr); gap:12px;
+  }
+  .cat-card{
+    background:var(--bg-card); border:1px solid var(--line); border-radius:14px;
+    padding:22px 10px; text-align:center; cursor:pointer; transition:.2s;
+  }
+  .cat-card:hover{border-color:var(--red); transform:translateY(-3px);}
+  .cat-icon{
+    width:38px; height:38px; margin:0 auto 10px;
+    display:flex; align-items:center; justify-content:center;
+    border-radius:10px; background:rgba(230,51,42,0.1);
+  }
+  .cat-card span{font-size:12px; color:var(--text-dim); font-weight:500;}
+
+  /* ---------- Reviews ---------- */
+  .review-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+  .review-card{
+    background:var(--bg-card); border:1px solid var(--line); border-radius:16px; padding:18px;
+    display:flex; gap:14px; align-items:flex-start; transition:.2s;
+  }
+  .review-card:hover{border-color:rgba(230,51,42,0.4);}
+  .score-ring{
+    flex-shrink:0; width:56px; height:56px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:15px;
+    background:conic-gradient(var(--red) calc(var(--pct)*1%), var(--bg-elev) 0);
+  }
+  .score-ring .inner{
+    width:44px; height:44px; border-radius:50%; background:var(--bg-card);
+    display:flex; align-items:center; justify-content:center; font-size:14px;
+  }
+  .review-body p{font-size:12px; color:var(--text-dim); line-height:1.5; margin-bottom:10px;}
+  .review-link{font-size:12px; color:var(--text); border-bottom:1px solid var(--red); padding-bottom:1px;}
+
+  /* ---------- Quick Compare ---------- */
+  .compare-wrap{
+    display:grid; grid-template-columns:1fr auto 1fr; gap:20px; align-items:center;
+    background:var(--bg-card); border:1px solid var(--line); border-radius:20px; padding:26px;
+  }
+  .compare-slot{display:flex; align-items:center; gap:14px;}
+  .compare-thumb{width:52px; height:64px; border-radius:10px; flex-shrink:0;}
+  select.compare-select{
+    width:100%; background:var(--bg-elev); border:1px solid var(--line); color:var(--text);
+    padding:10px 12px; border-radius:10px; font-size:13px; font-family:'Inter',sans-serif;
+    outline:none; cursor:pointer;
+  }
+  .vs-badge{
+    width:40px; height:40px; border-radius:50%; background:var(--red); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px;
+    box-shadow:0 0 20px -4px rgba(230,51,42,0.8);
+  }
+  .compare-cta{grid-column:1 / -1; text-align:center; margin-top:6px;}
+
+  /* ---------- Footer ---------- */
+  footer{
+    border-top:1px solid var(--line); padding:30px 32px; text-align:center;
+    color:var(--text-faint); font-size:12px;
+  }
+  footer a{margin:0 6px; transition:color .2s;}
+  footer a:hover{color:var(--red);}
+
+  /* ---------- Toast ---------- */
+  .toast{
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--bg-card); border:1px solid var(--red); color:var(--text);
+    padding:12px 20px; border-radius:12px; font-size:13px;
+    opacity:0; pointer-events:none; transition:.3s; z-index:200;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:900px){
+    nav.links{display:none;}
+    .searchbar{display:none;}
+    .burger{display:flex;}
+    nav.links.mobile-open{
+      display:flex; flex-direction:column; gap:0;
+      position:absolute; top:100%; left:0; right:0;
+      background:var(--bg-elev); border-bottom:1px solid var(--line);
+      padding:8px 32px 16px;
+    }
+    nav.links.mobile-open a{padding:12px 0; border-bottom:1px solid var(--line); width:100%;}
+    nav.links.mobile-open a:last-child{border-bottom:none;}
+    .nav-inner{position:relative;}
+    .brand-grid, .cat-grid{grid-template-columns:repeat(3,1fr);}
+    .review-grid{grid-template-columns:1fr;}
+    .compare-wrap{grid-template-columns:1fr; text-align:center;}
+    .vs-badge{margin:0 auto;}
+    h1.headline{font-size:32px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav-inner">
+    <div class="logo">
+      <svg viewBox="0 0 64 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M32 8 C26 2, 14 2, 6 10 C14 10, 22 13, 28 20 C22 20, 12 22, 4 30 C14 30, 24 27, 30 20 L32 40 L34 20 C40 27, 50 30, 60 30 C52 22, 42 20, 36 20 C42 13, 50 10, 58 10 C50 2, 38 2, 32 8 Z" fill="#e6332a"/>
+      </svg>
+      <span class="logo-text">Phone<span>Up</span></span>
+    </div>
+    <nav class="links">
+      <a href="#" class="active">Home</a>
+      <a href="#phones">Phones</a>
+      <a href="#compare">Compare</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#latest">Latest</a>
+      <a href="#best">Best Phones</a>
+      <a href="#brands">Brands</a>
+    </nav>
+    <div class="searchbar">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="searchInput" type="text" placeholder="Search phones...">
+    </div>
+    <button class="burger"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="ring-stage">
+    <div class="ring r1"></div>
+    <div class="ring r2"></div>
+    <div class="ring r3"></div>
+    <div class="hero-phone"></div>
+  </div>
+  <h1 class="headline">Everything About <span class="accent">Smartphones</span> in One Place</h1>
+  <p class="sub">Complete specifications, detailed reviews, comparisons, camera tests, battery performance, pros, cons, and expert ratings.</p>
+  <button class="btn-primary" onclick="showToast('Browse all phones below 👇')">Explore Phones →</button>
+</section>
+
+<section id="latest">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Latest Phones</h2>
+      <a class="see-all" href="#">See all</a>
+    </div>
+    <div class="rail" id="latestRail"></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Trending Phones</h2>
+      <a class="see-all" href="#">See all</a>
+    </div>
+    <div class="rail" id="trendingRail"></div>
+  </div>
+</section>
+
+<section id="brands">
+  <div class="wrap">
+    <div class="section-head"><h2>Brands</h2></div>
+    <div class="brand-grid" id="brandGrid"></div>
+  </div>
+</section>
+
+<section id="best">
+  <div class="wrap">
+    <div class="section-head"><h2>Best Phones</h2></div>
+    <div class="cat-grid" id="catGrid"></div>
+  </div>
+</section>
+
+<section id="reviews">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Latest Reviews</h2>
+      <a class="see-all" href="#">See all</a>
+    </div>
+    <div class="review-grid" id="reviewGrid"></div>
+  </div>
+</section>
+
+<section id="compare">
+  <div class="wrap">
+    <div class="section-head"><h2>Quick Compare</h2></div>
+    <div class="compare-wrap">
+      <div class="compare-slot">
+        <div class="compare-thumb g1"></div>
+        <select class="compare-select" id="compareA"></select>
+      </div>
+      <div class="vs-badge">VS</div>
+      <div class="compare-slot">
+        <div class="compare-thumb g3"></div>
+        <select class="compare-select" id="compareB"></select>
+      </div>
+      <div class="compare-cta">
+        <button class="btn-primary" onclick="runCompare()">Compare Now</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>
+    <a href="#">About</a>·<a href="#">Contact</a>·<a href="#">Privacy Policy</a>·<a href="#">Terms</a>·<a href="#">FAQ</a>·<a href="#">Social Media</a>
+  </div>
+  <div style="margin-top:10px;">© 2026 PhoneUp. All rights reserved.</div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const phones = [
+    {name:"Galaxy Fold X", brand:"Samsung", price:"$1,899", rating:4.6, date:"Jan 17, 2026", views:"23K", g:"g1"},
+    {name:"Pixel Aura", brand:"Google", price:"$999", rating:4.4, date:"Jan 11, 2026", views:"18K", g:"g2"},
+    {name:"Xperia Neo", brand:"Sony", price:"$1,299", rating:4.2, date:"Jan 9, 2026", views:"12K", g:"g3"},
+    {name:"iPhone 18 Pro", brand:"Apple", price:"$1,199", rating:4.8, date:"Sep 20, 2025", views:"41K", g:"g4"},
+    {name:"Xiaomi Ultra 15", brand:"Xiaomi", price:"$899", rating:4.5, date:"Aug 14, 2025", views:"27K", g:"g5"},
+    {name:"Honor Magic 8", brand:"Honor", price:"$799", rating:4.3, date:"Jul 2, 2025", views:"15K", g:"g6"},
+  ];
+  const trending = [
+    {name:"iPhone 17 Air", price:"$1,098", rating:4.7, date:"Jul 22", g:"g7"},
+    {name:"Galaxy S25 Ultra", price:"$1,298", rating:4.6, date:"Jul 21", g:"g8"},
+    {name:"Pixel 10 Pro", price:"$999", rating:4.5, date:"Jul 20", g:"g2"},
+    {name:"OnePlus 14", price:"$799", rating:4.4, date:"Jul 18", g:"g3"},
+  ];
+  const brands = ["Samsung","Apple","Xiaomi","Honor","Oppo","Vivo","Huawei","Google Pixel","Nothing","OnePlus","Motorola","Realme"];
+  const categories = [
+    {label:"Best Camera", icon:"📷"},
+    {label:"Best Battery", icon:"🔋"},
+    {label:"Best Performance", icon:"⚡"},
+    {label:"Best Display", icon:"🖥️"},
+    {label:"Best Gaming", icon:"🎮"},
+    {label:"Best Value", icon:"💰"},
+  ];
+  const reviews = [
+    {score:92, title:"Galaxy Fold X Review", text:"A bold step into foldables — sharp screen, strong battery life, and a camera that punches above its price."},
+    {score:86, title:"Pixel Aura Review", text:"Clean software and an excellent camera stack, though charging speeds trail the competition this year."},
+    {score:87, title:"Xperia Neo Review", text:"A niche pick for audio and photography purists, with a display that still leads the pack in color accuracy."},
+  ];
+
+  function starString(r){
+    const full = Math.round(r);
+    return "★★★★★".slice(0,full) + "☆☆☆☆☆".slice(0, 5-full);
+  }
+
+  function phoneCard(p){
+    return `<div class="phone-card" onclick="showToast('${p.name} — details page coming soon')">
+      <div class="thumb ${p.g}"><div class="mini-phone"></div></div>
+      <div class="card-meta">Release: ${p.date}</div>
+      <div class="card-name">${p.name}</div>
+      <div class="card-price">${p.price}</div>
+      <div class="stars">${starString(p.rating)}</div>
+      <a class="btn-ghost">View Details</a>
+    </div>`;
+  }
+  function trendCard(p){
+    return `<div class="phone-card" onclick="showToast('${p.name} — details page coming soon')">
+      <div class="thumb ${p.g}"><div class="mini-phone"></div></div>
+      <div class="card-meta">Release: ${p.date}</div>
+      <div class="card-name">${p.name}</div>
+      <div class="card-price">${p.price}</div>
+      <div class="stars">${starString(p.rating)}</div>
+      <a class="btn-ghost">View Details</a>
+    </div>`;
+  }
+
+  document.getElementById('latestRail').innerHTML = phones.map(phoneCard).join('');
+  document.getElementById('trendingRail').innerHTML = trending.map(trendCard).join('');
+
+  document.getElementById('brandGrid').innerHTML = brands.map(b =>
+    `<div class="brand-chip" onclick="toggleBrand(this,'${b}')">${b}</div>`).join('');
+
+  document.getElementById('catGrid').innerHTML = categories.map(c =>
+    `<div class="cat-card" onclick="showToast('Showing ${c.label} phones')">
+      <div class="cat-icon">${c.icon}</div><span>${c.label}</span>
+    </div>`).join('');
+
+  document.getElementById('reviewGrid').innerHTML = reviews.map(r =>
+    `<div class="review-card">
+      <div class="score-ring" style="--pct:${r.score}"><div class="inner">${(r.score/10).toFixed(1)}</div></div>
+      <div class="review-body">
+        <div class="card-name" style="margin-bottom:6px;">${r.title}</div>
+        <p>${r.text}</p>
+        <a class="review-link" href="#" onclick="event.preventDefault(); showToast('Full review coming soon')">Read Review</a>
+      </div>
+    </div>`).join('');
+
+  const selA = document.getElementById('compareA');
+  const selB = document.getElementById('compareB');
+  phones.forEach((p,i) => {
+    selA.innerHTML += `<option value="${i}">${p.name}</option>`;
+    selB.innerHTML += `<option value="${i}">${p.name}</option>`;
+  });
+  selB.selectedIndex = 1;
+
+  function toggleBrand(el, name){
+    document.querySelectorAll('.brand-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    showToast(`Filtering phones by ${name}`);
+  }
+
+  function runCompare(){
+    const a = phones[selA.value].name;
+    const b = phones[selB.value].name;
+    showToast(`Comparing ${a} vs ${b}`);
+  }
+
+  let toastTimer;
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  // Search System
+  const searchInput = document.getElementById("searchInput");
+
+  searchInput.addEventListener("input", function(){
+    const value = this.value.toLowerCase();
+
+    document.querySelectorAll(".phone-card").forEach(card=>{
+      const name = card.innerText.toLowerCase();
+
+      if(name.includes(value)){
+        card.style.display="block";
+      }else{
+        card.style.display="none";
+      }
+    });
+  });
+
+
+  // Mobile Menu
+  const burger = document.querySelector(".burger");
+  const nav = document.querySelector("nav.links");
+
+  burger.addEventListener("click",()=>{
+    nav.classList.toggle("mobile-open");
+  });
+
+
+  // Phone Details Button
+  document.querySelectorAll(".btn-ghost").forEach(btn=>{
+    btn.addEventListener("click",(e)=>{
+      e.stopPropagation();
+      showToast("Opening phone specifications...");
+    });
+  });
+
+
+  // Smooth section navigation
+  document.querySelectorAll("nav a").forEach(link=>{
+    link.addEventListener("click",function(){
+      nav.classList.remove("mobile-open");
+    });
+  });
+</script>
+
+</body>
+</html>
