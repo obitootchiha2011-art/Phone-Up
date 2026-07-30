@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>All Phones — PhoneUp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0a0a0c;
+    --bg-elev: #131316;
+    --bg-card: #17171b;
+    --line: #232327;
+    --red: #e6332a;
+    --text: #f2f1ee;
+    --text-dim: #9a9a9f;
+    --text-faint: #5c5c62;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg); color:var(--text); font-family:'Inter', sans-serif; -webkit-font-smoothing:antialiased;}
+  h1,h2,h3{font-family:'Space Grotesk', sans-serif;}
+  a{color:inherit; text-decoration:none;}
+  ::selection{background:var(--red); color:#fff;}
+  .wrap{max-width:1240px; margin:0 auto; padding:0 32px;}
+
+  /* ---------- Header (shared) ---------- */
+  header{position:sticky; top:0; z-index:100; background:rgba(10,10,12,0.85); backdrop-filter:blur(14px); border-bottom:1px solid var(--line);}
+  .nav-inner{max-width:1240px; margin:0 auto; padding:16px 32px; display:flex; align-items:center; justify-content:space-between; gap:24px; position:relative;}
+  .logo{display:flex; align-items:center; gap:10px; flex-shrink:0;}
+  .logo svg{height:30px; width:auto; filter:drop-shadow(0 0 10px rgba(230,51,42,0.45));}
+  .logo-text{font-weight:700; font-size:18px; letter-spacing:-0.02em;}
+  .logo-text span{color:var(--red);}
+  nav.links{display:flex; align-items:center; gap:30px; font-size:14px; color:var(--text-dim);}
+  nav.links a{position:relative; padding:4px 0; transition:color .2s;}
+  nav.links a:hover{color:var(--text);}
+  nav.links a.active{color:var(--text);}
+  nav.links a.active::after{content:''; position:absolute; left:0; right:0; bottom:-6px; height:2px; background:var(--red); box-shadow:0 0 8px var(--red);}
+  .searchbar{display:flex; align-items:center; gap:8px; background:var(--bg-elev); border:1px solid var(--line); border-radius:20px; padding:8px 14px; min-width:190px; transition:border-color .2s;}
+  .searchbar:focus-within{border-color:var(--red);}
+  .searchbar input{background:none; border:none; outline:none; color:var(--text); font-size:13px; width:100%; font-family:'Inter',sans-serif;}
+  .searchbar input::placeholder{color:var(--text-faint);}
+  .burger{display:none; flex-direction:column; gap:5px; cursor:pointer; background:none; border:none;}
+  .burger span{width:22px; height:2px; background:var(--text);}
+  nav.links.mobile-open{display:flex; flex-direction:column; gap:0; position:absolute; top:100%; left:0; right:0; background:var(--bg-elev); border-bottom:1px solid var(--line); padding:8px 32px 16px; z-index:99;}
+  nav.links.mobile-open a{padding:12px 0; border-bottom:1px solid var(--line); width:100%;}
+
+  /* ---------- Page header ---------- */
+  .page-head{padding:44px 0 24px; border-bottom:1px solid var(--line);}
+  .page-head h1{font-size:30px; font-weight:700; letter-spacing:-0.02em; margin-bottom:6px;}
+  .page-head p{color:var(--text-dim); font-size:14px;}
+  .result-count{color:var(--red); font-weight:600;}
+
+  /* ---------- Filter bar ---------- */
+  .filter-bar{
+    display:flex; flex-wrap:wrap; gap:12px; align-items:center;
+    padding:20px 0; position:sticky; top:63px; z-index:60;
+    background:rgba(10,10,12,0.92); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .filter-bar select, .filter-bar .search-mini{
+    background:var(--bg-card); border:1px solid var(--line); color:var(--text);
+    padding:10px 14px; border-radius:10px; font-size:13px; font-family:'Inter',sans-serif;
+    outline:none; cursor:pointer;
+  }
+  .filter-bar select:hover, .filter-bar .search-mini:focus-within{border-color:var(--red);}
+  .search-mini{display:flex; align-items:center; gap:8px; flex:1; min-width:180px; cursor:text;}
+  .search-mini input{background:none; border:none; outline:none; color:var(--text); font-size:13px; width:100%; font-family:'Inter',sans-serif;}
+  .search-mini input::placeholder{color:var(--text-faint);}
+  .clear-filters{
+    margin-left:auto; font-size:12px; color:var(--text-dim); border:1px solid var(--line);
+    padding:9px 14px; border-radius:10px; cursor:pointer; background:var(--bg-card); transition:.2s;
+  }
+  .clear-filters:hover{color:var(--red); border-color:var(--red);}
+
+  /* ---------- Grid ---------- */
+  .phones-grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(200px,1fr)); gap:18px;
+    padding:32px 0 60px;
+  }
+  .phone-card{
+    background:var(--bg-card); border:1px solid var(--line); border-radius:16px; padding:16px; cursor:pointer;
+    transition:transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+  }
+  .phone-card:hover{transform:translateY(-4px); border-color:rgba(230,51,42,0.4); box-shadow:0 14px 30px -14px rgba(0,0,0,0.7);}
+  .thumb{height:150px; border-radius:12px; margin-bottom:14px; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;}
+  .thumb .mini-phone{width:56px; height:112px; border-radius:12px; border:2px solid rgba(255,255,255,0.35); background:rgba(255,255,255,0.08); backdrop-filter:blur(2px);}
+  .card-meta{font-size:11px; color:var(--text-faint); margin-bottom:4px;}
+  .card-name{font-size:15px; font-weight:600; margin-bottom:2px;}
+  .card-price{font-size:13px; color:var(--text-dim); margin-bottom:8px;}
+  .stars{color:var(--red); font-size:12px; letter-spacing:1px; margin-bottom:12px;}
+  .btn-ghost{display:block; width:100%; text-align:center; background:var(--bg-elev); border:1px solid var(--line); color:var(--text); font-size:12px; font-weight:500; padding:9px; border-radius:10px; transition:background .18s, border-color .18s;}
+  .phone-card:hover .btn-ghost{border-color:var(--red); background:rgba(230,51,42,0.08);}
+
+  .g1{background:linear-gradient(135deg,#6a3ad1,#e6332a);}
+  .g2{background:linear-gradient(135deg,#1fb6a6,#e8e35e);}
+  .g3{background:linear-gradient(135deg,#3a63e6,#c23ad6);}
+  .g4{background:linear-gradient(135deg,#2f2f34,#8a8a92);}
+  .g5{background:linear-gradient(135deg,#e6332a,#ff9d6c);}
+  .g6{background:linear-gradient(135deg,#20202a,#4a4a58);}
+  .g7{background:linear-gradient(135deg,#d6336c,#e6332a);}
+  .g8{background:linear-gradient(135deg,#3a3a40,#6a6a72);}
+  .g9{background:linear-gradient(135deg,#0e7a6b,#1fb6a6);}
+  .g10{background:linear-gradient(135deg,#8a2be2,#3a63e6);}
+
+  .empty-state{
+    display:none; text-align:center; padding:60px 20px; color:var(--text-dim);
+  }
+  .empty-state.show{display:block;}
+  .empty-state .icon{font-size:34px; margin-bottom:12px;}
+  .empty-state h3{font-size:16px; color:var(--text); margin-bottom:6px;}
+  .empty-state p{font-size:13px;}
+
+  footer{border-top:1px solid var(--line); padding:30px 32px; text-align:center; color:var(--text-faint); font-size:12px;}
+  footer a{margin:0 6px; transition:color .2s;}
+  footer a:hover{color:var(--red);}
+
+  .toast{position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--bg-card); border:1px solid var(--red); color:var(--text); padding:12px 20px; border-radius:12px; font-size:13px; opacity:0; pointer-events:none; transition:.3s; z-index:200;}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  @media (max-width:900px){
+    nav.links{display:none;}
+    .searchbar{display:none;}
+    .burger{display:flex;}
+    .filter-bar{top:63px;}
+    .clear-filters{margin-left:0; order:99; width:100%; text-align:center;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav-inner">
+    <div class="logo">
+      <svg viewBox="0 0 64 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M32 8 C26 2, 14 2, 6 10 C14 10, 22 13, 28 20 C22 20, 12 22, 4 30 C14 30, 24 27, 30 20 L32 40 L34 20 C40 27, 50 30, 60 30 C52 22, 42 20, 36 20 C42 13, 50 10, 58 10 C50 2, 38 2, 32 8 Z" fill="#e6332a"/>
+      </svg>
+      <span class="logo-text">Phone<span>Up</span></span>
+    </div>
+    <nav class="links">
+      <a href="index.html">Home</a>
+      <a href="#" class="active">Phones</a>
+      <a href="#">Compare</a>
+      <a href="#">Reviews</a>
+      <a href="#">Latest</a>
+      <a href="#">Best Phones</a>
+      <a href="#">Brands</a>
+    </nav>
+    <div class="searchbar">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" placeholder="Search phones...">
+    </div>
+    <button class="burger"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="page-head">
+    <h1>All Phones</h1>
+    <p><span class="result-count" id="resultCount">0</span> phones found — filter by brand, price, or release year</p>
+  </div>
+
+  <div class="filter-bar">
+    <select id="filterBrand">
+      <option value="">All Brands</option>
+    </select>
+    <select id="filterPrice">
+      <option value="">Any Price</option>
+      <option value="0-500">Under $500</option>
+      <option value="500-900">$500 – $900</option>
+      <option value="900-1300">$900 – $1,300</option>
+      <option value="1300-99999">$1,300+</option>
+    </select>
+    <select id="filterYear">
+      <option value="">Any Year</option>
+    </select>
+    <select id="sortBy">
+      <option value="newest">Sort: Newest</option>
+      <option value="priceLow">Sort: Price (Low → High)</option>
+      <option value="priceHigh">Sort: Price (High → Low)</option>
+      <option value="rating">Sort: Highest Rated</option>
+    </select>
+    <div class="search-mini">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" id="filterSearch" placeholder="Search within results...">
+    </div>
+    <div class="clear-filters" id="clearFilters">Clear Filters</div>
+  </div>
+
+  <div class="phones-grid" id="phonesGrid"></div>
+  <div class="empty-state" id="emptyState">
+    <div class="icon">📱</div>
+    <h3>No phones match your filters</h3>
+    <p>Try adjusting your brand, price, or year filters.</p>
+  </div>
+</div>
+
+<footer>
+  <div><a href="#">About</a>·<a href="#">Contact</a>·<a href="#">Privacy Policy</a>·<a href="#">Terms</a>·<a href="#">FAQ</a>·<a href="#">Social Media</a></div>
+  <div style="margin-top:10px;">© 2026 PhoneUp. All rights reserved.</div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const allPhones = [
+    {name:"Galaxy Fold X", brand:"Samsung", price:1899, rating:4.6, year:2026, g:"g1"},
+    {name:"Pixel Aura", brand:"Google", price:999, rating:4.4, year:2026, g:"g2"},
+    {name:"Xperia Neo", brand:"Sony", price:1299, rating:4.2, year:2026, g:"g3"},
+    {name:"iPhone 18 Pro", brand:"Apple", price:1199, rating:4.8, year:2025, g:"g4"},
+    {name:"Xiaomi Ultra 15", brand:"Xiaomi", price:899, rating:4.5, year:2025, g:"g5"},
+    {name:"Honor Magic 8", brand:"Honor", price:799, rating:4.3, year:2025, g:"g6"},
+    {name:"iPhone 17 Air", brand:"Apple", price:1098, rating:4.7, year:2025, g:"g7"},
+    {name:"Galaxy S25 Ultra", brand:"Samsung", price:1298, rating:4.6, year:2025, g:"g8"},
+    {name:"Pixel 10 Pro", brand:"Google", price:999, rating:4.5, year:2025, g:"g2"},
+    {name:"OnePlus 14", brand:"OnePlus", price:799, rating:4.4, year:2025, g:"g3"},
+    {name:"Oppo Find X9", brand:"Oppo", price:1099, rating:4.3, year:2025, g:"g9"},
+    {name:"Vivo X200 Pro", brand:"Vivo", price:1049, rating:4.2, year:2025, g:"g10"},
+    {name:"Motorola Edge 60", brand:"Motorola", price:499, rating:3.9, year:2025, g:"g6"},
+    {name:"Realme GT 8", brand:"Realme", price:449, rating:4.0, year:2025, g:"g1"},
+    {name:"Nothing Phone 3", brand:"Nothing", price:699, rating:4.1, year:2025, g:"g9"},
+    {name:"Huawei Mate 80", brand:"Huawei", price:1199, rating:4.3, year:2025, g:"g10"},
+  ];
+
+  const grid = document.getElementById('phonesGrid');
+  const resultCount = document.getElementById('resultCount');
+  const emptyState = document.getElementById('emptyState');
+  const filterBrand = document.getElementById('filterBrand');
+  const filterPrice = document.getElementById('filterPrice');
+  const filterYear = document.getElementById('filterYear');
+  const sortBy = document.getElementById('sortBy');
+  const filterSearch = document.getElementById('filterSearch');
+
+  // populate brand + year filters dynamically
+  [...new Set(allPhones.map(p => p.brand))].sort().forEach(b => {
+    filterBrand.innerHTML += `<option value="${b}">${b}</option>`;
+  });
+  [...new Set(allPhones.map(p => p.year))].sort((a,b)=>b-a).forEach(y => {
+    filterYear.innerHTML += `<option value="${y}">${y}</option>`;
+  });
+
+  function starString(r){
+    const full = Math.round(r);
+    return "★★★★★".slice(0,full) + "☆☆☆☆☆".slice(0, 5-full);
+  }
+
+  function card(p){
+    return `<div class="phone-card" onclick="showToast('${p.name} — opening details page')">
+      <div class="thumb ${p.g}"><div class="mini-phone"></div></div>
+      <div class="card-meta">${p.brand} · ${p.year}</div>
+      <div class="card-name">${p.name}</div>
+      <div class="card-price">$${p.price.toLocaleString()}</div>
+      <div class="stars">${starString(p.rating)}</div>
+      <a class="btn-ghost" onclick="event.stopPropagation(); showToast('Opening phone specifications...')">View Details</a>
+    </div>`;
+  }
+
+  function render(){
+    let list = [...allPhones];
+
+    if(filterBrand.value) list = list.filter(p => p.brand === filterBrand.value);
+    if(filterYear.value) list = list.filter(p => String(p.year) === filterYear.value);
+    if(filterPrice.value){
+      const [lo,hi] = filterPrice.value.split('-').map(Number);
+      list = list.filter(p => p.price >= lo && p.price <= hi);
+    }
+    const q = filterSearch.value.trim().toLowerCase();
+    if(q) list = list.filter(p => p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q));
+
+    switch(sortBy.value){
+      case 'priceLow': list.sort((a,b)=>a.price-b.price); break;
+      case 'priceHigh': list.sort((a,b)=>b.price-a.price); break;
+      case 'rating': list.sort((a,b)=>b.rating-a.rating); break;
+      default: list.sort((a,b)=>b.year-a.year);
+    }
+
+    grid.innerHTML = list.map(card).join('');
+    resultCount.textContent = list.length;
+    emptyState.classList.toggle('show', list.length === 0);
+  }
+
+  [filterBrand, filterPrice, filterYear, sortBy].forEach(el => el.addEventListener('change', render));
+  filterSearch.addEventListener('input', render);
+
+  document.getElementById('clearFilters').addEventListener('click', () => {
+    filterBrand.value = ''; filterPrice.value = ''; filterYear.value = ''; sortBy.value = 'newest'; filterSearch.value = '';
+    render();
+    showToast('Filters cleared');
+  });
+
+  render();
+
+  // Mobile menu
+  const burger = document.querySelector('.burger');
+  const nav = document.querySelector('nav.links');
+  burger.addEventListener('click', () => nav.classList.toggle('mobile-open'));
+  document.querySelectorAll('nav a').forEach(link => {
+    link.addEventListener('click', () => nav.classList.remove('mobile-open'));
+  });
+
+  let toastTimer;
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+  }
+</script>
+
+</body>
+</html>
