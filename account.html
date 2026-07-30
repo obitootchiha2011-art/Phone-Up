@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Account — PhoneUp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0a0a0c; --bg-elev:#131316; --bg-card:#17171b; --line:#232327; --red:#e6332a; --text:#f2f1ee; --text-dim:#9a9a9f; --text-faint:#5c5c62;}
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--bg); color:var(--text); font-family:'Inter', sans-serif; -webkit-font-smoothing:antialiased;}
+  h1,h2,h3{font-family:'Space Grotesk', sans-serif;}
+  a{color:inherit; text-decoration:none;}
+  .wrap{max-width:640px; margin:0 auto; padding:0 32px;}
+
+  header{position:sticky; top:0; z-index:100; background:rgba(10,10,12,0.85); backdrop-filter:blur(14px); border-bottom:1px solid var(--line);}
+  .nav-inner{max-width:1240px; margin:0 auto; padding:16px 32px; display:flex; align-items:center; justify-content:space-between; gap:24px; position:relative;}
+  .logo{display:flex; align-items:center; gap:10px;}
+  .logo svg{height:30px; filter:drop-shadow(0 0 10px rgba(230,51,42,0.45));}
+  .logo-text{font-weight:700; font-size:18px;}
+  .logo-text span{color:var(--red);}
+  nav.links{display:flex; align-items:center; gap:30px; font-size:14px; color:var(--text-dim);}
+  nav.links a:hover{color:var(--text);}
+  .burger{display:none; flex-direction:column; gap:5px; cursor:pointer; background:none; border:none;}
+  .burger span{width:22px; height:2px; background:var(--text);}
+  nav.links.mobile-open{display:flex; flex-direction:column; position:absolute; top:100%; left:0; right:0; background:var(--bg-elev); border-bottom:1px solid var(--line); padding:8px 32px 16px; z-index:99;}
+  nav.links.mobile-open a{padding:12px 0; border-bottom:1px solid var(--line);}
+
+  /* ---------- Auth view ---------- */
+  .auth-box{max-width:380px; margin:70px auto; background:var(--bg-card); border:1px solid var(--line); border-radius:20px; padding:32px;}
+  .auth-box h1{font-size:22px; text-align:center; margin-bottom:6px;}
+  .auth-box p.sub{text-align:center; color:var(--text-dim); font-size:13px; margin-bottom:24px;}
+  .auth-tabs{display:flex; background:var(--bg-elev); border-radius:12px; padding:4px; margin-bottom:22px;}
+  .auth-tab{flex:1; text-align:center; padding:9px; font-size:13px; border-radius:9px; cursor:pointer; color:var(--text-dim); transition:.2s;}
+  .auth-tab.active{background:var(--red); color:#fff;}
+  .field{margin-bottom:14px;}
+  .field label{display:block; font-size:12px; color:var(--text-dim); margin-bottom:6px;}
+  .field input{
+    width:100%; background:var(--bg-elev); border:1px solid var(--line); color:var(--text);
+    padding:11px 14px; border-radius:10px; font-size:13px; outline:none; font-family:'Inter',sans-serif;
+  }
+  .field input:focus{border-color:var(--red);}
+  .btn-primary{
+    width:100%; background:var(--red); color:#fff; font-weight:600; font-size:14px; padding:13px;
+    border-radius:12px; border:none; cursor:pointer; margin-top:6px; transition:.18s;
+  }
+  .btn-primary:hover{background:#f13d33;}
+
+  /* ---------- Profile view ---------- */
+  .profile-view{display:none; padding:44px 0 60px;}
+  .profile-view.show{display:block;}
+  .profile-head{display:flex; align-items:center; gap:16px; margin-bottom:30px;}
+  .avatar-lg{width:64px; height:64px; border-radius:50%; background:linear-gradient(135deg,var(--red),#6a3ad1); flex-shrink:0;}
+  .profile-head h2{font-size:20px;}
+  .profile-head p{font-size:13px; color:var(--text-faint);}
+  .stat-row{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:30px;}
+  .stat-card{background:var(--bg-card); border:1px solid var(--line); border-radius:14px; padding:16px; text-align:center;}
+  .stat-card .num{font-size:20px; font-weight:700; color:var(--red);}
+  .stat-card .lab{font-size:11px; color:var(--text-faint); margin-top:4px;}
+  .section-title{font-size:14px; color:var(--text-dim); margin-bottom:12px; text-transform:uppercase; letter-spacing:.04em;}
+  .fav-row{display:flex; gap:12px; overflow-x:auto; margin-bottom:34px; scrollbar-width:none;}
+  .fav-row::-webkit-scrollbar{display:none;}
+  .fav-card{flex:0 0 130px; background:var(--bg-card); border:1px solid var(--line); border-radius:14px; padding:12px; cursor:pointer;}
+  .fav-thumb{height:80px; border-radius:8px; margin-bottom:8px;}
+  .fav-name{font-size:12px; font-weight:600;}
+  .g1{background:linear-gradient(135deg,#6a3ad1,#e6332a);}
+  .g2{background:linear-gradient(135deg,#1fb6a6,#e8e35e);}
+  .g4{background:linear-gradient(135deg,#2f2f34,#8a8a92);}
+  .account-list{background:var(--bg-card); border:1px solid var(--line); border-radius:16px; overflow:hidden;}
+  .account-item{display:flex; justify-content:space-between; align-items:center; padding:15px 18px; border-bottom:1px solid var(--line); font-size:13px; cursor:pointer;}
+  .account-item:last-child{border-bottom:none;}
+  .account-item:hover{background:var(--bg-elev);}
+  .account-item.danger{color:var(--red);}
+
+  .toast{position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--bg-card); border:1px solid var(--red); color:var(--text); padding:12px 20px; border-radius:12px; font-size:13px; opacity:0; pointer-events:none; transition:.3s; z-index:200;}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  @media (max-width:700px){ nav.links{display:none;} .burger{display:flex;} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav-inner">
+    <div class="logo">
+      <svg viewBox="0 0 64 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M32 8 C26 2, 14 2, 6 10 C14 10, 22 13, 28 20 C22 20, 12 22, 4 30 C14 30, 24 27, 30 20 L32 40 L34 20 C40 27, 50 30, 60 30 C52 22, 42 20, 36 20 C42 13, 50 10, 58 10 C50 2, 38 2, 32 8 Z" fill="#e6332a"/>
+      </svg>
+      <span class="logo-text">Phone<span>Up</span></span>
+    </div>
+    <nav class="links">
+      <a href="index.html">Home</a>
+      <a href="phones.html">Phones</a>
+      <a href="compare.html">Compare</a>
+      <a href="reviews.html">Reviews</a>
+      <a href="latest.html">Latest</a>
+      <a href="best-phones.html">Best Phones</a>
+      <a href="brands.html">Brands</a>
+    </nav>
+    <button class="burger"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<div class="wrap">
+  <!-- Auth (shown first) -->
+  <div class="auth-box" id="authBox">
+    <h1>Welcome to PhoneUp</h1>
+    <p class="sub">Sign in to save phones and write reviews</p>
+    <div class="auth-tabs">
+      <div class="auth-tab active" data-mode="login">Log In</div>
+      <div class="auth-tab" data-mode="signup">Sign Up</div>
+    </div>
+    <div class="field" id="nameField" style="display:none;">
+      <label>Full Name</label>
+      <input type="text" id="nameInput" placeholder="Your name">
+    </div>
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="emailInput" placeholder="you@example.com">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="passInput" placeholder="••••••••">
+    </div>
+    <button class="btn-primary" id="submitAuth">Log In</button>
+  </div>
+
+  <!-- Profile (shown after "login") -->
+  <div class="profile-view" id="profileView">
+    <div class="profile-head">
+      <div class="avatar-lg"></div>
+      <div>
+        <h2 id="profileName">Guest User</h2>
+        <p id="profileEmail">you@example.com</p>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-card"><div class="num">12</div><div class="lab">Favorites</div></div>
+      <div class="stat-card"><div class="num">4</div><div class="lab">Reviews Written</div></div>
+      <div class="stat-card"><div class="num">3</div><div class="lab">Comparisons Saved</div></div>
+    </div>
+
+    <div class="section-title">Favorite Phones</div>
+    <div class="fav-row">
+      <div class="fav-card" onclick="showToast('Opening Galaxy Fold X')"><div class="fav-thumb g1"></div><div class="fav-name">Galaxy Fold X</div></div>
+      <div class="fav-card" onclick="showToast('Opening Pixel Aura')"><div class="fav-thumb g2"></div><div class="fav-name">Pixel Aura</div></div>
+      <div class="fav-card" onclick="showToast('Opening iPhone 18 Pro')"><div class="fav-thumb g4"></div><div class="fav-name">iPhone 18 Pro</div></div>
+    </div>
+
+    <div class="section-title">Account</div>
+    <div class="account-list">
+      <div class="account-item" onclick="showToast('Opening settings')">Edit Profile <span>›</span></div>
+      <div class="account-item" onclick="showToast('Opening notification settings')">Notifications <span>›</span></div>
+      <div class="account-item" onclick="showToast('Opening privacy settings')">Privacy <span>›</span></div>
+      <div class="account-item danger" onclick="logout()">Log Out</div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const authBox = document.getElementById('authBox');
+  const profileView = document.getElementById('profileView');
+  const nameField = document.getElementById('nameField');
+  const submitBtn = document.getElementById('submitAuth');
+  let mode = 'login';
+
+  document.querySelectorAll('.auth-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      mode = tab.dataset.mode;
+      nameField.style.display = mode === 'signup' ? 'block' : 'none';
+      submitBtn.textContent = mode === 'signup' ? 'Create Account' : 'Log In';
+    });
+  });
+
+  submitBtn.addEventListener('click', () => {
+    const email = document.getElementById('emailInput').value.trim();
+    if(!email){ showToast('Please enter an email'); return; }
+    const name = document.getElementById('nameInput').value.trim() || email.split('@')[0];
+    document.getElementById('profileName').textContent = name;
+    document.getElementById('profileEmail').textContent = email;
+    authBox.style.display = 'none';
+    profileView.classList.add('show');
+    showToast(mode === 'signup' ? 'Account created — welcome!' : 'Welcome back!');
+  });
+
+  function logout(){
+    profileView.classList.remove('show');
+    authBox.style.display = 'block';
+    showToast('Logged out');
+  }
+
+  const burger = document.querySelector('.burger');
+  const nav = document.querySelector('nav.links');
+  burger.addEventListener('click', () => nav.classList.toggle('mobile-open'));
+  document.querySelectorAll('nav a').forEach(link => link.addEventListener('click', () => nav.classList.remove('mobile-open')));
+
+  let toastTimer;
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+  }
+</script>
+
+</body>
+</html>
