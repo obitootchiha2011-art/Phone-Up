@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galaxy Fold X — PhoneUp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0a0c; --bg-elev:#131316; --bg-card:#17171b; --line:#232327;
+    --red:#e6332a; --green:#2fae63; --text:#f2f1ee; --text-dim:#9a9a9f; --text-faint:#5c5c62;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg); color:var(--text); font-family:'Inter', sans-serif; -webkit-font-smoothing:antialiased;}
+  h1,h2,h3{font-family:'Space Grotesk', sans-serif;}
+  a{color:inherit; text-decoration:none;}
+  ::selection{background:var(--red); color:#fff;}
+  .wrap{max-width:1100px; margin:0 auto; padding:0 32px;}
+
+  header{position:sticky; top:0; z-index:100; background:rgba(10,10,12,0.85); backdrop-filter:blur(14px); border-bottom:1px solid var(--line);}
+  .nav-inner{max-width:1240px; margin:0 auto; padding:16px 32px; display:flex; align-items:center; justify-content:space-between; gap:24px; position:relative;}
+  .logo{display:flex; align-items:center; gap:10px;}
+  .logo svg{height:30px; filter:drop-shadow(0 0 10px rgba(230,51,42,0.45));}
+  .logo-text{font-weight:700; font-size:18px;}
+  .logo-text span{color:var(--red);}
+  nav.links{display:flex; align-items:center; gap:30px; font-size:14px; color:var(--text-dim);}
+  nav.links a:hover{color:var(--text);}
+  .burger{display:none; flex-direction:column; gap:5px; cursor:pointer; background:none; border:none;}
+  .burger span{width:22px; height:2px; background:var(--text);}
+  nav.links.mobile-open{display:flex; flex-direction:column; position:absolute; top:100%; left:0; right:0; background:var(--bg-elev); border-bottom:1px solid var(--line); padding:8px 32px 16px; z-index:99;}
+  nav.links.mobile-open a{padding:12px 0; border-bottom:1px solid var(--line);}
+
+  .breadcrumb{padding:18px 0 0; font-size:12px; color:var(--text-faint);}
+  .breadcrumb a:hover{color:var(--red);}
+
+  /* ---------- Hero: gallery + summary ---------- */
+  .detail-hero{display:grid; grid-template-columns:1fr 1.15fr; gap:44px; padding:28px 0 40px; align-items:start;}
+  .gallery-main{
+    height:380px; border-radius:20px; position:relative; overflow:hidden;
+    display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(135deg,#6a3ad1,#e6332a);
+  }
+  .gallery-main .mega-phone{width:120px; height:250px; border-radius:24px; border:2px solid rgba(255,255,255,0.4); background:rgba(255,255,255,0.08); backdrop-filter:blur(2px);}
+  .gallery-badge{position:absolute; top:16px; left:16px; background:rgba(0,0,0,0.5); backdrop-filter:blur(6px); font-size:11px; padding:6px 12px; border-radius:20px; color:#fff;}
+  .thumb-row{display:flex; gap:10px; margin-top:12px;}
+  .thumb-row .t{flex:1; height:64px; border-radius:10px; cursor:pointer; border:1.5px solid transparent; transition:.2s;}
+  .thumb-row .t.active, .thumb-row .t:hover{border-color:var(--red);}
+
+  .summary h1{font-size:28px; font-weight:700; letter-spacing:-0.02em; margin-bottom:6px;}
+  .summary .sub-brand{color:var(--text-dim); font-size:14px; margin-bottom:16px;}
+  .price-row{display:flex; align-items:baseline; gap:12px; margin-bottom:18px;}
+  .price-row .price{font-size:26px; font-weight:700; color:var(--red);}
+  .price-row .old-price{font-size:14px; color:var(--text-faint); text-decoration:line-through;}
+  .score-box{
+    display:flex; align-items:center; gap:14px; background:var(--bg-card); border:1px solid var(--line);
+    border-radius:14px; padding:16px; margin-bottom:20px;
+  }
+  .score-circle{
+    width:58px; height:58px; border-radius:50%; flex-shrink:0;
+    background:conic-gradient(var(--red) 92%, var(--bg-elev) 0);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .score-circle .inner{width:46px; height:46px; border-radius:50%; background:var(--bg-card); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px;}
+  .score-box .label{font-size:12px; color:var(--text-dim);}
+  .score-box .label strong{display:block; color:var(--text); font-size:14px; margin-bottom:2px;}
+
+  .quick-specs{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:22px;}
+  .qs-item{background:var(--bg-card); border:1px solid var(--line); border-radius:12px; padding:12px; text-align:center;}
+  .qs-item .v{font-size:13px; font-weight:600;}
+  .qs-item .l{font-size:10px; color:var(--text-faint); margin-top:3px; text-transform:uppercase; letter-spacing:.04em;}
+
+  .action-row{display:flex; gap:10px;}
+  .btn-primary{
+    flex:1; display:flex; align-items:center; justify-content:center; gap:8px;
+    background:var(--red); color:#fff; font-weight:600; font-size:14px; padding:13px 18px;
+    border-radius:14px; border:none; cursor:pointer; transition:.18s;
+    box-shadow:0 8px 20px -8px rgba(230,51,42,0.6);
+  }
+  .btn-primary:hover{transform:translateY(-2px); background:#f13d33;}
+  .btn-outline{
+    width:52px; display:flex; align-items:center; justify-content:center;
+    background:var(--bg-card); border:1px solid var(--line); border-radius:14px; cursor:pointer; transition:.18s;
+  }
+  .btn-outline:hover{border-color:var(--red); color:var(--red);}
+  .btn-outline.active{border-color:var(--red); color:var(--red); background:rgba(230,51,42,0.1);}
+
+  /* ---------- Tabs ---------- */
+  .tabs{display:flex; gap:6px; border-bottom:1px solid var(--line); margin-top:20px; overflow-x:auto;}
+  .tab{padding:14px 18px; font-size:13px; color:var(--text-dim); cursor:pointer; white-space:nowrap; border-bottom:2px solid transparent; transition:.2s;}
+  .tab:hover{color:var(--text);}
+  .tab.active{color:var(--text); border-color:var(--red);}
+  .tab-panel{display:none; padding:32px 0;}
+  .tab-panel.active{display:block;}
+
+  /* ---------- Specs table ---------- */
+  .spec-group{margin-bottom:26px;}
+  .spec-group h3{font-size:14px; color:var(--red); margin-bottom:12px; text-transform:uppercase; letter-spacing:.04em;}
+  .spec-row{display:flex; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--line); font-size:13px;}
+  .spec-row .k{color:var(--text-faint);}
+  .spec-row .v{color:var(--text); font-weight:500; text-align:right; max-width:60%;}
+
+  /* ---------- Pros/Cons ---------- */
+  .pc-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+  .pc-card{background:var(--bg-card); border:1px solid var(--line); border-radius:16px; padding:22px;}
+  .pc-card h3{font-size:14px; margin-bottom:14px; display:flex; align-items:center; gap:8px;}
+  .pc-card.pros h3{color:var(--green);}
+  .pc-card.cons h3{color:var(--red);}
+  .pc-card ul{list-style:none;}
+  .pc-card li{font-size:13px; color:var(--text-dim); padding:8px 0 8px 22px; position:relative; line-height:1.5;}
+  .pc-card.pros li::before{content:'✓'; position:absolute; left:0; color:var(--green); font-weight:700;}
+  .pc-card.cons li::before{content:'✕'; position:absolute; left:0; color:var(--red); font-weight:700;}
+
+  /* ---------- Rating bars ---------- */
+  .rating-bars{display:flex; flex-direction:column; gap:14px; margin-bottom:30px;}
+  .rbar{display:grid; grid-template-columns:120px 1fr 36px; gap:14px; align-items:center; font-size:13px;}
+  .rbar .track{height:8px; background:var(--bg-elev); border-radius:4px; overflow:hidden;}
+  .rbar .fill{height:100%; background:linear-gradient(90deg,var(--red),#ff7a6c); border-radius:4px;}
+  .rbar .num{color:var(--text-dim); text-align:right;}
+
+  /* ---------- Review text ---------- */
+  .review-text{color:var(--text-dim); font-size:14px; line-height:1.8;}
+  .review-text p{margin-bottom:14px;}
+
+  /* ---------- Comments ---------- */
+  .comment{display:flex; gap:14px; padding:18px 0; border-bottom:1px solid var(--line);}
+  .avatar{width:38px; height:38px; border-radius:50%; flex-shrink:0; background:linear-gradient(135deg,var(--red),#6a3ad1);}
+  .comment-body .name{font-size:13px; font-weight:600; margin-bottom:2px;}
+  .comment-body .meta{font-size:11px; color:var(--text-faint); margin-bottom:8px;}
+  .comment-body p{font-size:13px; color:var(--text-dim); line-height:1.6;}
+  .comment-stars{color:var(--red); font-size:11px; margin-bottom:4px;}
+  .comment-form{display:flex; gap:10px; margin-top:20px;}
+  .comment-form input{
+    flex:1; background:var(--bg-card); border:1px solid var(--line); color:var(--text);
+    padding:12px 16px; border-radius:12px; font-size:13px; outline:none; font-family:'Inter',sans-serif;
+  }
+  .comment-form input:focus{border-color:var(--red);}
+  .comment-form button{
+    background:var(--red); color:#fff; border:none; padding:0 22px; border-radius:12px; font-weight:600; font-size:13px; cursor:pointer;
+  }
+
+  /* ---------- Related ---------- */
+  .related{padding:40px 0 60px;}
+  .related h2{font-size:20px; margin-bottom:20px;}
+  .rail{display:flex; gap:16px; overflow-x:auto; scrollbar-width:none;}
+  .rail::-webkit-scrollbar{display:none;}
+  .phone-card{flex:0 0 200px; background:var(--bg-card); border:1px solid var(--line); border-radius:16px; padding:14px; cursor:pointer; transition:.2s;}
+  .phone-card:hover{transform:translateY(-4px); border-color:rgba(230,51,42,0.4);}
+  .thumb-sm{height:130px; border-radius:10px; margin-bottom:12px;}
+  .card-name{font-size:14px; font-weight:600;}
+  .card-price{font-size:12px; color:var(--text-dim); margin:2px 0 6px;}
+  .g2{background:linear-gradient(135deg,#1fb6a6,#e8e35e);}
+  .g4{background:linear-gradient(135deg,#2f2f34,#8a8a92);}
+  .g7{background:linear-gradient(135deg,#d6336c,#e6332a);}
+  .g9{background:linear-gradient(135deg,#0e7a6b,#1fb6a6);}
+
+  footer{border-top:1px solid var(--line); padding:30px 32px; text-align:center; color:var(--text-faint); font-size:12px;}
+  footer a{margin:0 6px;}
+  footer a:hover{color:var(--red);}
+
+  .toast{position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--bg-card); border:1px solid var(--red); color:var(--text); padding:12px 20px; border-radius:12px; font-size:13px; opacity:0; pointer-events:none; transition:.3s; z-index:200;}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  @media (max-width:860px){
+    nav.links{display:none;}
+    .burger{display:flex;}
+    .detail-hero{grid-template-columns:1fr;}
+    .pc-grid{grid-template-columns:1fr;}
+    .quick-specs{grid-template-columns:repeat(2,1fr);}
+    .rbar{grid-template-columns:90px 1fr 30px; gap:8px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav-inner">
+    <div class="logo">
+      <svg viewBox="0 0 64 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M32 8 C26 2, 14 2, 6 10 C14 10, 22 13, 28 20 C22 20, 12 22, 4 30 C14 30, 24 27, 30 20 L32 40 L34 20 C40 27, 50 30, 60 30 C52 22, 42 20, 36 20 C42 13, 50 10, 58 10 C50 2, 38 2, 32 8 Z" fill="#e6332a"/>
+      </svg>
+      <span class="logo-text">Phone<span>Up</span></span>
+    </div>
+    <nav class="links">
+      <a href="index.html">Home</a>
+      <a href="phones.html">Phones</a>
+      <a href="#">Compare</a>
+      <a href="#">Reviews</a>
+      <a href="#">Latest</a>
+      <a href="#">Best Phones</a>
+      <a href="#">Brands</a>
+    </nav>
+    <button class="burger"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="breadcrumb">
+    <a href="index.html">Home</a> / <a href="phones.html">Phones</a> / <a href="phones.html">Samsung</a> / Galaxy Fold X
+  </div>
+
+  <div class="detail-hero">
+    <div>
+      <div class="gallery-main" id="galleryMain">
+        <span class="gallery-badge">📷 1 / 5</span>
+        <div class="mega-phone"></div>
+      </div>
+      <div class="thumb-row">
+        <div class="t active g1" onclick="setActive(this,0)"></div>
+        <div class="t g2" onclick="setActive(this,1)"></div>
+        <div class="t g4" onclick="setActive(this,2)"></div>
+        <div class="t g7" onclick="setActive(this,3)"></div>
+        <div class="t g9" onclick="setActive(this,4)"></div>
+      </div>
+    </div>
+
+    <div class="summary">
+      <h1>Galaxy Fold X</h1>
+      <div class="sub-brand">Samsung · Released Jan 17, 2026</div>
+
+      <div class="price-row">
+        <span class="price">$1,899</span>
+        <span class="old-price">$2,099</span>
+      </div>
+
+      <div class="score-box">
+        <div class="score-circle"><div class="inner">9.2</div></div>
+        <div class="label"><strong>Excellent</strong>PhoneUp editorial rating based on 6 categories</div>
+      </div>
+
+      <div class="quick-specs">
+        <div class="qs-item"><div class="v">7.6″</div><div class="l">Display</div></div>
+        <div class="qs-item"><div class="v">200MP</div><div class="l">Camera</div></div>
+        <div class="qs-item"><div class="v">4800mAh</div><div class="l">Battery</div></div>
+        <div class="qs-item"><div class="v">16GB</div><div class="l">RAM</div></div>
+        <div class="qs-item"><div class="v">512GB</div><div class="l">Storage</div></div>
+        <div class="qs-item"><div class="v">Snapdragon 8 Elite</div><div class="l">Chipset</div></div>
+      </div>
+
+      <div class="action-row">
+        <button class="btn-primary" onclick="showToast('Compare list updated')">⚖️ Add to Compare</button>
+        <button class="btn-outline" id="saveBtn" onclick="toggleSave(this)">♡</button>
+        <button class="btn-outline" onclick="showToast('Link copied')">🔗</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <div class="tab active" data-tab="specs">Specifications</div>
+    <div class="tab" data-tab="proscons">Pros & Cons</div>
+    <div class="tab" data-tab="rating">PhoneUp Rating</div>
+    <div class="tab" data-tab="review">Full Review</div>
+    <div class="tab" data-tab="comments">Comments (48)</div>
+  </div>
+
+  <div class="tab-panel active" id="panel-specs">
+    <div class="spec-group">
+      <h3>Display</h3>
+      <div class="spec-row"><span class="k">Type</span><span class="v">Dynamic AMOLED 2X, Foldable</span></div>
+      <div class="spec-row"><span class="k">Size</span><span class="v">7.6″ main / 6.3″ cover</span></div>
+      <div class="spec-row"><span class="k">Resolution</span><span class="v">2176 × 1812 px</span></div>
+      <div class="spec-row"><span class="k">Refresh Rate</span><span class="v">120Hz Adaptive</span></div>
+      <div class="spec-row"><span class="k">Protection</span><span class="v">Gorilla Glass Victus 3 + UTG</span></div>
+    </div>
+    <div class="spec-group">
+      <h3>Performance</h3>
+      <div class="spec-row"><span class="k">Chipset</span><span class="v">Snapdragon 8 Elite for Galaxy</span></div>
+      <div class="spec-row"><span class="k">GPU</span><span class="v">Adreno 830</span></div>
+      <div class="spec-row"><span class="k">RAM</span><span class="v">16GB LPDDR5X</span></div>
+      <div class="spec-row"><span class="k">Storage</span><span class="v">512GB / 1TB UFS 4.0</span></div>
+      <div class="spec-row"><span class="k">OS</span><span class="v">Android 16, One UI 8</span></div>
+    </div>
+    <div class="spec-group">
+      <h3>Camera</h3>
+      <div class="spec-row"><span class="k">Rear</span><span class="v">200MP main + 12MP ultrawide + 10MP telephoto</span></div>
+      <div class="spec-row"><span class="k">Front</span><span class="v">10MP cover + 4MP under-display</span></div>
+      <div class="spec-row"><span class="k">Video</span><span class="v">8K @ 30fps, 4K @ 60fps</span></div>
+      <div class="spec-row"><span class="k">Features</span><span class="v">OIS, Night mode, 10x Space Zoom</span></div>
+    </div>
+    <div class="spec-group">
+      <h3>Battery</h3>
+      <div class="spec-row"><span class="k">Capacity</span><span class="v">4,800 mAh</span></div>
+      <div class="spec-row"><span class="k">Wired Charging</span><span class="v">45W</span></div>
+      <div class="spec-row"><span class="k">Wireless Charging</span><span class="v">15W</span></div>
+      <div class="spec-row"><span class="k">Reverse Charging</span><span class="v">4.5W</span></div>
+    </div>
+    <div class="spec-group">
+      <h3>Connectivity</h3>
+      <div class="spec-row"><span class="k">5G</span><span class="v">Yes, Sub-6 + mmWave</span></div>
+      <div class="spec-row"><span class="k">Wi-Fi</span><span class="v">Wi-Fi 7</span></div>
+      <div class="spec-row"><span class="k">Bluetooth</span><span class="v">5.4</span></div>
+      <div class="spec-row"><span class="k">NFC</span><span class="v">Yes</span></div>
+      <div class="spec-row"><span class="k">USB</span><span class="v">USB-C 3.2</span></div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="panel-proscons">
+    <div class="pc-grid">
+      <div class="pc-card pros">
+        <h3>👍 Pros</h3>
+        <ul>
+          <li>Nearly invisible crease on the main display</li>
+          <li>Flagship-level camera system for a foldable</li>
+          <li>Excellent multitasking with the larger inner screen</li>
+          <li>Premium build quality with IP68 rating</li>
+          <li>Strong battery life despite the dual-screen design</li>
+        </ul>
+      </div>
+      <div class="pc-card cons">
+        <h3>👎 Cons</h3>
+        <ul>
+          <li>Very expensive compared to standard flagships</li>
+          <li>Thicker and heavier than a regular phone</li>
+          <li>Wireless charging speed lags behind competitors</li>
+          <li>Limited availability of official accessories at launch</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="panel-rating">
+    <div class="rating-bars">
+      <div class="rbar"><span>Design</span><div class="track"><div class="fill" style="width:94%"></div></div><span class="num">9.4</span></div>
+      <div class="rbar"><span>Performance</span><div class="track"><div class="fill" style="width:96%"></div></div><span class="num">9.6</span></div>
+      <div class="rbar"><span>Camera</span><div class="track"><div class="fill" style="width:90%"></div></div><span class="num">9.0</span></div>
+      <div class="rbar"><span>Battery</span><div class="track"><div class="fill" style="width:85%"></div></div><span class="num">8.5</span></div>
+      <div class="rbar"><span>Display</span><div class="track"><div class="fill" style="width:95%"></div></div><span class="num">9.5</span></div>
+      <div class="rbar"><span>Value</span><div class="track"><div class="fill" style="width:78%"></div></div><span class="num">7.8</span></div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="panel-review">
+    <div class="review-text">
+      <p>The Galaxy Fold X represents Samsung's most refined foldable to date. The crease on the inner display is nearly imperceptible during everyday use, and the hinge mechanism feels noticeably more solid than previous generations.</p>
+      <p>Performance is a clear highlight — the Snapdragon 8 Elite variant handles multitasking across the 7.6-inch inner display without any stutter, making this one of the few foldables that genuinely replaces a tablet for light productivity work.</p>
+      <p>The camera system punches above what we'd expect from a foldable form factor, though it still trails dedicated camera flagships in low-light telephoto shots. Battery life comfortably covers a full day of moderate use, but heavy users relying on the inner display will want to charge by early evening.</p>
+      <p>Overall, this is the most complete foldable Samsung has released, held back mainly by its price and the inherent compromises of the category rather than any specific flaw in execution.</p>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="panel-comments">
+    <div class="comment">
+      <div class="avatar"></div>
+      <div class="comment-body">
+        <div class="name">Sarah M.</div>
+        <div class="comment-stars">★★★★★</div>
+        <div class="meta">2 days ago</div>
+        <p>Been using it for two weeks now — the multitasking on the big screen genuinely changed how I work on the go.</p>
+      </div>
+    </div>
+    <div class="comment">
+      <div class="avatar"></div>
+      <div class="comment-body">
+        <div class="name">Karim A.</div>
+        <div class="comment-stars">★★★★☆</div>
+        <div class="meta">5 days ago</div>
+        <p>Camera is great, battery could be better if you use the inner screen a lot. Still worth it for me.</p>
+      </div>
+    </div>
+    <div class="comment">
+      <div class="avatar"></div>
+      <div class="comment-body">
+        <div class="name">Lina T.</div>
+        <div class="comment-stars">★★★★★</div>
+        <div class="meta">1 week ago</div>
+        <p>Crease is barely noticeable compared to my old foldable. Worth the upgrade.</p>
+      </div>
+    </div>
+    <div class="comment-form">
+      <input type="text" id="commentInput" placeholder="Share your experience with this phone...">
+      <button onclick="postComment()">Post</button>
+    </div>
+  </div>
+
+  <div class="related">
+    <h2>Related Phones</h2>
+    <div class="rail">
+      <div class="phone-card" onclick="showToast('Opening Pixel Aura')">
+        <div class="thumb-sm g2"></div>
+        <div class="card-name">Pixel Aura</div>
+        <div class="card-price">$999</div>
+      </div>
+      <div class="phone-card" onclick="showToast('Opening iPhone 18 Pro')">
+        <div class="thumb-sm g4"></div>
+        <div class="card-name">iPhone 18 Pro</div>
+        <div class="card-price">$1,199</div>
+      </div>
+      <div class="phone-card" onclick="showToast('Opening iPhone 17 Air')">
+        <div class="thumb-sm g7"></div>
+        <div class="card-name">iPhone 17 Air</div>
+        <div class="card-price">$1,098</div>
+      </div>
+      <div class="phone-card" onclick="showToast('Opening Oppo Find X9')">
+        <div class="thumb-sm g9"></div>
+        <div class="card-name">Oppo Find X9</div>
+        <div class="card-price">$1,099</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div><a href="#">About</a>·<a href="#">Contact</a>·<a href="#">Privacy Policy</a>·<a href="#">Terms</a>·<a href="#">FAQ</a>·<a href="#">Social Media</a></div>
+  <div style="margin-top:10px;">© 2026 PhoneUp. All rights reserved.</div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const gradients = ['g1','g2','g4','g7','g9'];
+  function setActive(el, i){
+    document.querySelectorAll('.thumb-row .t').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    const main = document.getElementById('galleryMain');
+    main.style.background = getComputedStyle(el).backgroundImage;
+    main.querySelector('.gallery-badge').textContent = `📷 ${i+1} / 5`;
+  }
+
+  // Tabs
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+    });
+  });
+
+  function toggleSave(btn){
+    btn.classList.toggle('active');
+    btn.textContent = btn.classList.contains('active') ? '♥' : '♡';
+    showToast(btn.classList.contains('active') ? 'Saved to your list' : 'Removed from your list');
+  }
+
+  function postComment(){
+    const input = document.getElementById('commentInput');
+    if(!input.value.trim()) return;
+    const list = document.querySelector('#panel-comments');
+    const div = document.createElement('div');
+    div.className = 'comment';
+    div.innerHTML = `<div class="avatar"></div><div class="comment-body">
+      <div class="name">You</div><div class="comment-stars">★★★★★</div><div class="meta">Just now</div>
+      <p>${input.value.replace(/</g,'&lt;')}</p></div>`;
+    document.querySelector('.comment-form').before(div);
+    input.value = '';
+    showToast('Comment posted');
+  }
+
+  // Mobile menu
+  const burger = document.querySelector('.burger');
+  const nav = document.querySelector('nav.links');
+  burger.addEventListener('click', () => nav.classList.toggle('mobile-open'));
+  document.querySelectorAll('nav a').forEach(link => link.addEventListener('click', () => nav.classList.remove('mobile-open')));
+
+  let toastTimer;
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+  }
+</script>
+
+</body>
+</html>
