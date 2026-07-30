@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Search Results — PhoneUp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0a0a0c; --bg-elev:#131316; --bg-card:#17171b; --line:#232327; --red:#e6332a; --text:#f2f1ee; --text-dim:#9a9a9f; --text-faint:#5c5c62;}
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg); color:var(--text); font-family:'Inter', sans-serif; -webkit-font-smoothing:antialiased;}
+  h1,h2,h3{font-family:'Space Grotesk', sans-serif;}
+  a{color:inherit; text-decoration:none;}
+  ::selection{background:var(--red); color:#fff;}
+  .wrap{max-width:1100px; margin:0 auto; padding:0 32px;}
+
+  header{position:sticky; top:0; z-index:100; background:rgba(10,10,12,0.85); backdrop-filter:blur(14px); border-bottom:1px solid var(--line);}
+  .nav-inner{max-width:1240px; margin:0 auto; padding:16px 32px; display:flex; align-items:center; justify-content:space-between; gap:24px; position:relative;}
+  .logo{display:flex; align-items:center; gap:10px;}
+  .logo svg{height:30px; filter:drop-shadow(0 0 10px rgba(230,51,42,0.45));}
+  .logo-text{font-weight:700; font-size:18px;}
+  .logo-text span{color:var(--red);}
+  nav.links{display:flex; align-items:center; gap:30px; font-size:14px; color:var(--text-dim);}
+  nav.links a:hover{color:var(--text);}
+  .burger{display:none; flex-direction:column; gap:5px; cursor:pointer; background:none; border:none;}
+  .burger span{width:22px; height:2px; background:var(--text);}
+  nav.links.mobile-open{display:flex; flex-direction:column; position:absolute; top:100%; left:0; right:0; background:var(--bg-elev); border-bottom:1px solid var(--line); padding:8px 32px 16px; z-index:99;}
+  nav.links.mobile-open a{padding:12px 0; border-bottom:1px solid var(--line);}
+
+  .search-hero{padding:44px 0 20px;}
+  .search-hero h1{font-size:26px; font-weight:700; margin-bottom:16px;}
+  .big-search{
+    display:flex; align-items:center; gap:10px; background:var(--bg-card); border:1px solid var(--line);
+    border-radius:16px; padding:14px 18px; max-width:520px;
+  }
+  .big-search:focus-within{border-color:var(--red);}
+  .big-search input{flex:1; background:none; border:none; outline:none; color:var(--text); font-size:14px; font-family:'Inter',sans-serif;}
+  .result-summary{color:var(--text-dim); font-size:13px; margin:18px 0 22px;}
+  .result-summary strong{color:var(--text);}
+
+  .result-list{display:flex; flex-direction:column; gap:12px; padding-bottom:60px;}
+  .result-card{
+    display:grid; grid-template-columns:80px 1fr auto auto; gap:18px; align-items:center;
+    background:var(--bg-card); border:1px solid var(--line); border-radius:14px; padding:14px 18px;
+    cursor:pointer; transition:.2s;
+  }
+  .result-card:hover{border-color:rgba(230,51,42,0.4); transform:translateX(4px);}
+  .rs-thumb{height:58px; border-radius:10px;}
+  .rs-name{font-size:14px; font-weight:600;}
+  .rs-brand{font-size:11px; color:var(--text-faint); margin-top:2px;}
+  .rs-price{font-size:14px; font-weight:700; color:var(--red);}
+  .rs-btn{
+    font-size:11px; background:var(--bg-elev); border:1px solid var(--line); padding:8px 14px; border-radius:8px;
+  }
+
+  .empty-state{display:none; text-align:center; padding:70px 20px; color:var(--text-dim);}
+  .empty-state.show{display:block;}
+  .empty-state .icon{font-size:36px; margin-bottom:14px;}
+  .empty-state h3{font-size:16px; color:var(--text); margin-bottom:6px;}
+
+  .g1{background:linear-gradient(135deg,#6a3ad1,#e6332a);}
+  .g2{background:linear-gradient(135deg,#1fb6a6,#e8e35e);}
+  .g3{background:linear-gradient(135deg,#3a63e6,#c23ad6);}
+  .g4{background:linear-gradient(135deg,#2f2f34,#8a8a92);}
+  .g5{background:linear-gradient(135deg,#e6332a,#ff9d6c);}
+  .g6{background:linear-gradient(135deg,#20202a,#4a4a58);}
+
+  footer{border-top:1px solid var(--line); padding:30px 32px; text-align:center; color:var(--text-faint); font-size:12px;}
+  footer a{margin:0 6px;}
+  footer a:hover{color:var(--red);}
+  .toast{position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--bg-card); border:1px solid var(--red); color:var(--text); padding:12px 20px; border-radius:12px; font-size:13px; opacity:0; pointer-events:none; transition:.3s; z-index:200;}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  @media (max-width:700px){
+    nav.links{display:none;}
+    .burger{display:flex;}
+    .result-card{grid-template-columns:56px 1fr auto;}
+    .rs-btn{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav-inner">
+    <div class="logo">
+      <svg viewBox="0 0 64 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M32 8 C26 2, 14 2, 6 10 C14 10, 22 13, 28 20 C22 20, 12 22, 4 30 C14 30, 24 27, 30 20 L32 40 L34 20 C40 27, 50 30, 60 30 C52 22, 42 20, 36 20 C42 13, 50 10, 58 10 C50 2, 38 2, 32 8 Z" fill="#e6332a"/>
+      </svg>
+      <span class="logo-text">Phone<span>Up</span></span>
+    </div>
+    <nav class="links">
+      <a href="index.html">Home</a>
+      <a href="phones.html">Phones</a>
+      <a href="compare.html">Compare</a>
+      <a href="reviews.html">Reviews</a>
+      <a href="latest.html">Latest</a>
+      <a href="best-phones.html">Best Phones</a>
+      <a href="brands.html">Brands</a>
+    </nav>
+    <button class="burger"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="search-hero">
+    <h1>Search Phones</h1>
+    <div class="big-search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" id="searchInput" placeholder="Search by name or brand..." autofocus>
+    </div>
+  </div>
+  <div class="result-summary" id="resultSummary"></div>
+  <div class="result-list" id="resultList"></div>
+  <div class="empty-state" id="emptyState">
+    <div class="icon">🔍</div>
+    <h3>No phones found</h3>
+    <p>Try a different name or brand.</p>
+  </div>
+</div>
+
+<footer>
+  <div><a href="#">About</a>·<a href="#">Contact</a>·<a href="#">Privacy Policy</a>·<a href="#">Terms</a>·<a href="#">FAQ</a>·<a href="#">Social Media</a></div>
+  <div style="margin-top:10px;">© 2026 PhoneUp. All rights reserved.</div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const allPhones = [
+    {name:"Galaxy Fold X", brand:"Samsung", price:1899, g:"g1"},
+    {name:"Pixel Aura", brand:"Google", price:999, g:"g2"},
+    {name:"Xperia Neo", brand:"Sony", price:1299, g:"g3"},
+    {name:"iPhone 18 Pro", brand:"Apple", price:1199, g:"g4"},
+    {name:"Xiaomi Ultra 15", brand:"Xiaomi", price:899, g:"g5"},
+    {name:"Honor Magic 8", brand:"Honor", price:799, g:"g6"},
+    {name:"iPhone 17 Air", brand:"Apple", price:1098, g:"g5"},
+    {name:"Galaxy S25 Ultra", brand:"Samsung", price:1298, g:"g1"},
+    {name:"OnePlus 14", brand:"OnePlus", price:799, g:"g3"},
+    {name:"Oppo Find X9", brand:"Oppo", price:1099, g:"g6"},
+  ];
+
+  const input = document.getElementById('searchInput');
+  const list = document.getElementById('resultList');
+  const summary = document.getElementById('resultSummary');
+  const empty = document.getElementById('emptyState');
+
+  function render(){
+    const q = input.value.trim().toLowerCase();
+    const results = q ? allPhones.filter(p => p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q)) : allPhones;
+
+    if(q){
+      summary.innerHTML = `<strong>${results.length}</strong> result${results.length!==1?'s':''} for "<strong>${input.value}</strong>"`;
+    } else {
+      summary.innerHTML = `Showing <strong>${results.length}</strong> phones — start typing to search`;
+    }
+
+    list.innerHTML = results.map(p => `
+      <div class="result-card" onclick="showToast('Opening ${p.name}')">
+        <div class="rs-thumb ${p.g}"></div>
+        <div><div class="rs-name">${p.name}</div><div class="rs-brand">${p.brand}</div></div>
+        <div class="rs-price">$${p.price.toLocaleString()}</div>
+        <div class="rs-btn">View Details</div>
+      </div>
+    `).join('');
+
+    empty.classList.toggle('show', results.length === 0);
+  }
+
+  input.addEventListener('input', render);
+  render();
+
+  const burger = document.querySelector('.burger');
+  const nav = document.querySelector('nav.links');
+  burger.addEventListener('click', () => nav.classList.toggle('mobile-open'));
+  document.querySelectorAll('nav a').forEach(link => link.addEventListener('click', () => nav.classList.remove('mobile-open')));
+
+  let toastTimer;
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+  }
+</script>
+
+</body>
+</html>
