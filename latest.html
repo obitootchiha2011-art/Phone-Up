@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Latest Phones — PhoneUp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0a0a0c; --bg-elev:#131316; --bg-card:#17171b; --line:#232327; --red:#e6332a; --text:#f2f1ee; --text-dim:#9a9a9f; --text-faint:#5c5c62;}
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg); color:var(--text); font-family:'Inter', sans-serif; -webkit-font-smoothing:antialiased;}
+  h1,h2,h3{font-family:'Space Grotesk', sans-serif;}
+  a{color:inherit; text-decoration:none;}
+  ::selection{background:var(--red); color:#fff;}
+  .wrap{max-width:1100px; margin:0 auto; padding:0 32px;}
+
+  header{position:sticky; top:0; z-index:100; background:rgba(10,10,12,0.85); backdrop-filter:blur(14px); border-bottom:1px solid var(--line);}
+  .nav-inner{max-width:1240px; margin:0 auto; padding:16px 32px; display:flex; align-items:center; justify-content:space-between; gap:24px; position:relative;}
+  .logo{display:flex; align-items:center; gap:10px;}
+  .logo svg{height:30px; filter:drop-shadow(0 0 10px rgba(230,51,42,0.45));}
+  .logo-text{font-weight:700; font-size:18px;}
+  .logo-text span{color:var(--red);}
+  nav.links{display:flex; align-items:center; gap:30px; font-size:14px; color:var(--text-dim);}
+  nav.links a:hover{color:var(--text);}
+  .burger{display:none; flex-direction:column; gap:5px; cursor:pointer; background:none; border:none;}
+  .burger span{width:22px; height:2px; background:var(--text);}
+  nav.links.mobile-open{display:flex; flex-direction:column; position:absolute; top:100%; left:0; right:0; background:var(--bg-elev); border-bottom:1px solid var(--line); padding:8px 32px 16px; z-index:99;}
+  nav.links.mobile-open a{padding:12px 0; border-bottom:1px solid var(--line);}
+
+  .page-head{padding:44px 0 24px;}
+  .page-head h1{font-size:30px; font-weight:700; letter-spacing:-0.02em; margin-bottom:6px;}
+  .page-head p{color:var(--text-dim); font-size:14px;}
+
+  .timeline{padding-bottom:60px;}
+  .month-group{margin-bottom:36px;}
+  .month-label{
+    font-size:13px; color:var(--red); font-weight:600; text-transform:uppercase; letter-spacing:.05em;
+    margin-bottom:16px; padding-bottom:10px; border-bottom:1px solid var(--line);
+  }
+  .latest-card{
+    display:grid; grid-template-columns:120px 1fr auto; gap:20px; align-items:center;
+    background:var(--bg-card); border:1px solid var(--line); border-radius:16px; padding:16px;
+    margin-bottom:12px; cursor:pointer; transition:.2s;
+  }
+  .latest-card:hover{border-color:rgba(230,51,42,0.4); transform:translateX(4px);}
+  .lt-thumb{height:90px; border-radius:10px;}
+  .lt-name{font-size:16px; font-weight:600; margin-bottom:4px;}
+  .lt-meta{font-size:12px; color:var(--text-faint);}
+  .lt-price{font-size:15px; font-weight:700; color:var(--red); text-align:right;}
+  .lt-date{font-size:11px; color:var(--text-faint); text-align:right; margin-top:4px;}
+  .new-badge{
+    display:inline-block; background:rgba(230,51,42,0.15); color:var(--red); font-size:10px;
+    padding:3px 8px; border-radius:6px; margin-left:8px; font-weight:600; vertical-align:middle;
+  }
+
+  .g1{background:linear-gradient(135deg,#6a3ad1,#e6332a);}
+  .g2{background:linear-gradient(135deg,#1fb6a6,#e8e35e);}
+  .g3{background:linear-gradient(135deg,#3a63e6,#c23ad6);}
+  .g4{background:linear-gradient(135deg,#2f2f34,#8a8a92);}
+  .g5{background:linear-gradient(135deg,#e6332a,#ff9d6c);}
+  .g6{background:linear-gradient(135deg,#20202a,#4a4a58);}
+
+  footer{border-top:1px solid var(--line); padding:30px 32px; text-align:center; color:var(--text-faint); font-size:12px;}
+  footer a{margin:0 6px;}
+  footer a:hover{color:var(--red);}
+  .toast{position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--bg-card); border:1px solid var(--red); color:var(--text); padding:12px 20px; border-radius:12px; font-size:13px; opacity:0; pointer-events:none; transition:.3s; z-index:200;}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  @media (max-width:700px){
+    nav.links{display:none;}
+    .burger{display:flex;}
+    .latest-card{grid-template-columns:70px 1fr; }
+    .lt-price, .lt-date{grid-column:2; text-align:left; margin-top:2px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav-inner">
+    <div class="logo">
+      <svg viewBox="0 0 64 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M32 8 C26 2, 14 2, 6 10 C14 10, 22 13, 28 20 C22 20, 12 22, 4 30 C14 30, 24 27, 30 20 L32 40 L34 20 C40 27, 50 30, 60 30 C52 22, 42 20, 36 20 C42 13, 50 10, 58 10 C50 2, 38 2, 32 8 Z" fill="#e6332a"/>
+      </svg>
+      <span class="logo-text">Phone<span>Up</span></span>
+    </div>
+    <nav class="links">
+      <a href="index.html">Home</a>
+      <a href="phones.html">Phones</a>
+      <a href="compare.html">Compare</a>
+      <a href="#">Reviews</a>
+      <a href="#" style="color:#f2f1ee">Latest</a>
+      <a href="#">Best Phones</a>
+      <a href="brands.html">Brands</a>
+    </nav>
+    <button class="burger"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="page-head">
+    <h1>Latest Phones</h1>
+    <p>New releases, sorted by launch date — newest first</p>
+  </div>
+  <div class="timeline" id="timeline"></div>
+</div>
+
+<footer>
+  <div><a href="#">About</a>·<a href="#">Contact</a>·<a href="#">Privacy Policy</a>·<a href="#">Terms</a>·<a href="#">FAQ</a>·<a href="#">Social Media</a></div>
+  <div style="margin-top:10px;">© 2026 PhoneUp. All rights reserved.</div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const releases = [
+    {name:"Galaxy Fold X", brand:"Samsung", price:1899, month:"July 2026", date:"Jul 28", g:"g1", isNew:true},
+    {name:"Pixel Aura", brand:"Google", price:999, month:"July 2026", date:"Jul 20", g:"g2", isNew:true},
+    {name:"Xperia Neo", brand:"Sony", price:1299, month:"July 2026", date:"Jul 12", g:"g3", isNew:true},
+    {name:"OnePlus 14", brand:"OnePlus", price:799, month:"June 2026", date:"Jun 25", g:"g4"},
+    {name:"iPhone 18 Pro", brand:"Apple", price:1199, month:"June 2026", date:"Jun 10", g:"g5"},
+    {name:"Xiaomi Ultra 15", brand:"Xiaomi", price:899, month:"May 2026", date:"May 22", g:"g6"},
+    {name:"Honor Magic 8", brand:"Honor", price:799, month:"May 2026", date:"May 8", g:"g1"},
+    {name:"Oppo Find X9", brand:"Oppo", price:1099, month:"April 2026", date:"Apr 14", g:"g2"},
+  ];
+
+  const groups = {};
+  releases.forEach(r => { (groups[r.month] ||= []).push(r); });
+
+  const timeline = document.getElementById('timeline');
+  timeline.innerHTML = Object.entries(groups).map(([month, items]) => `
+    <div class="month-group">
+      <div class="month-label">${month}</div>
+      ${items.map(r => `
+        <div class="latest-card" onclick="showToast('Opening ${r.name}')">
+          <div class="lt-thumb ${r.g}"></div>
+          <div>
+            <div class="lt-name">${r.name}${r.isNew ? '<span class="new-badge">NEW</span>' : ''}</div>
+            <div class="lt-meta">${r.brand}</div>
+          </div>
+          <div>
+            <div class="lt-price">$${r.price.toLocaleString()}</div>
+            <div class="lt-date">${r.date}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+
+  const burger = document.querySelector('.burger');
+  const nav = document.querySelector('nav.links');
+  burger.addEventListener('click', () => nav.classList.toggle('mobile-open'));
+  document.querySelectorAll('nav a').forEach(link => link.addEventListener('click', () => nav.classList.remove('mobile-open')));
+
+  let toastTimer;
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+  }
+</script>
+
+</body>
+</html>
